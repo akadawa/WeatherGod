@@ -40,15 +40,6 @@ services:
       org.opencontainers.image.title: WeatherGod
       org.opencontainers.image.source: https://github.com/akadawa/WeatherGod
 
-networks:
-  default:
-    name: weathergod-net
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.30.237.0/24
-          gateway: 172.30.237.1
-
 volumes:
   weathergod-data:
     name: weathergod-data

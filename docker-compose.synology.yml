@@ -1,5 +1,5 @@
 # Synology / Dockhand: vorgefertigtes Image von GitHub Container Registry pullen.
-# Kein lokaler Build nötig (umgeht „client version 1.52 is too new / API 1.43“ auf älteren Synology-Daemon).
+# network_mode: host → kein extra Docker-Netzwerk (kein Subnetz-Konflikt auf der NAS).
 #
 # Dockhand: Compose-Pfad = docker-compose.synology.yml
 # Registry-Login für ghcr.io erforderlich (privates Repo) – siehe DOCKER.md
@@ -10,11 +10,10 @@ services:
     image: ghcr.io/akadawa/weathergod:latest
     container_name: weathergod
     restart: unless-stopped
-    ports:
-      - "${HOST_PORT:-3000}:3000"
+    network_mode: host
     environment:
       NODE_ENV: production
-      PORT: "3000"
+      PORT: "${HOST_PORT:-3000}"
       TZ: ${TZ:-UTC}
       WEST_ANGLE_THRESHOLD: ${WEST_ANGLE_THRESHOLD:-15}
       DEFAULT_LAT: ${DEFAULT_LAT:-}
@@ -28,7 +27,7 @@ services:
     volumes:
       - weathergod-data:/app/data
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${HOST_PORT:-3000}/api/health || exit 1"]
       interval: 30s
       timeout: 5s
       start_period: 15s
@@ -36,16 +35,6 @@ services:
     labels:
       org.opencontainers.image.title: WeatherGod
       org.opencontainers.image.source: https://github.com/akadawa/WeatherGod
-
-networks:
-  default:
-    name: weathergod-net
-    driver: bridge
-    ipam:
-      config:
-        # Festes Subnetz – umgeht „no available IPv4 address pool“ auf Synology
-        - subnet: 172.30.237.0/24
-          gateway: 172.30.237.1
 
 volumes:
   weathergod-data:

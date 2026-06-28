@@ -76,6 +76,8 @@ Alternativ: unter GitHub → **Packages** → `weathergod` → **Package setting
 
 4. **Deploy** – Dockhand **pullt** das Image, baut **nicht** lokal.
 
+   **Netzwerk:** `network_mode: host` – kein extra Docker-Netzwerk, App läuft direkt auf Port **`HOST_PORT`** (Standard `3000`): `http://<NAS-IP>:3000`
+
 ### 4. Prüfen
 
 - Container **weathergod** → Status **healthy**
@@ -148,12 +150,12 @@ Funktioniert nicht auf allen Synology-Versionen zuverlässig – **Synology-Comp
 
 → `HOST_PORT=8080` (oder anderen freien Port) setzen.
 
-### `could not find an available, non-overlapping IPv4 address pool` (Synology)
+### `could not find an available, non-overlapping IPv4 address pool` / `Pool overlaps` (Synology)
 
-- **Ursache:** Docker hat keine freien Subnetze mehr für ein neues Compose-Netzwerk (`weathergod_default`).
-- **Lösung 1:** Aktuelle `docker-compose.synology.yml` nutzen (festes Subnetz `172.30.237.0/24`) → **Redeploy**.
-- **Lösung 2:** Alte Netzwerke aufräumen (SSH auf der NAS): `docker network prune` (nur ungenutzte Netzwerke).
-- **Lösung 3:** Subnetz in der Compose-Datei anpassen, falls `172.30.237.0/24` bei dir schon belegt ist (z. B. `172.30.238.0/24`).
+- **Ursache:** Docker kann kein (freies) Netzwerk-Subnetz anlegen – typisch bei vielen Stacks auf der NAS.
+- **Lösung:** Aktuelle `docker-compose.synology.yml` nutzt **`network_mode: host`** (kein `weathergod-net` mehr). **Redeploy** nach Pull.
+- **Port:** über `HOST_PORT` setzen (Standard `3000`), kein Port-Mapping nötig.
+- Optional aufräumen: `docker network prune` (ungenutzte Netzwerke).
 
 ### Healthcheck unhealthy
 
