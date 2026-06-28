@@ -6,7 +6,7 @@ const { startMonitor, stopMonitor, getStatus, testCurrentNotifications } = requi
 const { getSettingsPayload, updateSettings, getEffectiveNtfyTopic, getSettings } = require('../services/settingsStore');
 const { getWeatherData, getHistoryDayByYear, getCalendarMonth, getWmoWeatherCatalog } = require('../services/weatherService');
 const { getDashboardSummary } = require('../services/dashboardService');
-const { resolveWebcamSource, proxyWebcamResource } = require('../services/webcamService');
+const { resolveWebcamSource, proxyWebcamResource, toClientWebcamPayload } = require('../services/webcamService');
 const { getRadarMaps } = require('../services/radarService');
 
 const router = express.Router();
@@ -235,7 +235,7 @@ router.get('/webcam/resolve', async (req, res) => {
 
   try {
     const data = await resolveWebcamSource(url);
-    res.json(data);
+    res.json(toClientWebcamPayload(data));
   } catch (err) {
     console.error('[Webcam]', err.message);
     res.status(err.message.includes('Ungültig') || err.message.includes('unterstützt') ? 400 : 502)

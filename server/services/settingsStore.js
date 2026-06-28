@@ -101,6 +101,7 @@ function getDefaults() {
     partition: structuredClone(DEFAULT_PARTITION),
     navCollapsed: true,
     dashboardLayout: structuredClone(DEFAULT_DASHBOARD_LAYOUT),
+    webcamSource: '',
     lastNotification: null,
   };
 }

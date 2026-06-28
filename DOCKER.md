@@ -152,6 +152,10 @@ Funktioniert nicht auf allen Synology-Versionen zuverlässig – **Synology-Comp
 
 → 15–30 s warten; testen: `http://<NAS-IP>:3000/api/health`
 
+### Webcam-URL / Standort noch gespeichert (nicht im Git)
+
+→ Liegt in SQLite-Volume oder Browser-`localStorage`, nicht im Repository. Volume `weathergod-data` löschen oder in der App Webcam-Stream entfernen (Papierkorb-Button).
+
 ---
 
 ## Synology-Hinweis (Dockhand)

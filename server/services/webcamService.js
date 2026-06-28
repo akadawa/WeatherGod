@@ -231,6 +231,16 @@ function proxiedStreamUrl(streamUrl) {
   return `/api/webcam/proxy?url=${encodeURIComponent(streamUrl)}`;
 }
 
+function toClientWebcamPayload(data) {
+  return {
+    provider: data.provider,
+    type: data.type,
+    playbackUrl: data.playbackUrl,
+    poster: data.poster,
+    title: data.title,
+  };
+}
+
 module.exports = {
   resolveWebcamSource,
   proxyWebcamResource,
@@ -238,4 +248,5 @@ module.exports = {
   isWetterWebcamUrl,
   isDirectStreamUrl,
   proxiedStreamUrl,
+  toClientWebcamPayload,
 };

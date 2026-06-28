@@ -39,3 +39,14 @@ Healthcheck: `GET /api/health`
 Icon: Platzhalter unter `/img/icon.png` – neues Icon später ersetzen.
 
 **Dockhand-Anleitung:** siehe [`DOCKER.md`](DOCKER.md) – auf Synology `docker-compose.synology.yml` (Image von ghcr.io, kein lokaler Build).
+
+## Datenschutz / sensible Daten
+
+Im **Git-Repository** stehen **keine** persönlichen Standorte, Webcam-URLs oder Stream-Links.
+
+Nutzerdaten (Standort, `webcamSource`, Dashboard-Layout) liegen nur in:
+
+- SQLite (`DATABASE_PATH`, Volume auf der NAS)
+- Browser-`localStorage` (`weathergod-state`)
+
+Zum vollständigen Entfernen: Volume/DB löschen und Browser-Speicher leeren. Test-Skripte mit URLs gehören in `scripts/` (gitignored), nie committen.
