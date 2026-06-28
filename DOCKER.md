@@ -11,7 +11,7 @@ Repository: https://github.com/akadawa/WeatherGod (privat)
 - Docker / Container Manager auf der Synology
 - Dockhand installiert und erreichbar
 - GitHub-Zugang zum privaten Repo (Token oder SSH)
-- Freier Host-Port (Standard: **3000**)
+- Freier Host-Port (Synology-Standard: **8080**, über `HOST_PORT` änderbar)
 
 ---
 

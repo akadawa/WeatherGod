@@ -30,7 +30,7 @@ Repository: https://github.com/akadawa/WeatherGod.git
 1. Repo klonen oder in Dockhand als Git-Stack einbinden
 2. `.env.example` nach `.env` kopieren, **Standort** (`DEFAULT_LAT` / `DEFAULT_LON`) und ggf. ntfy-Topic eintragen
 3. Stack starten: `docker compose up -d --build`
-4. Im Browser: `http://<NAS-IP>:3000` (Port in `docker-compose.yml` anpassbar, z. B. `8080:3000`)
+4. Im Browser: `http://<NAS-IP>:8080` (Synology: `HOST_PORT`, Standard 8080)
 
 Persistenz: Volume `weathergod-data` → `/app/data` (SQLite unter `weathergod.db`).
 
