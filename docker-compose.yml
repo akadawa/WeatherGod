@@ -1,0 +1,45 @@
+# WeatherGod – Stack für Synology Dockhand / Docker Compose
+# Kein env_file: .env ist absichtlich nicht im Git. Variablen in Dockhand setzen oder lokal .env für ${…}-Substitution.
+name: weathergod
+
+services:
+  weathergod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Kein vorgefertigtes Image – nur lokal aus Dockerfile bauen, nicht von Registry pullen
+    pull_policy: build
+    container_name: weathergod
+    restart: unless-stopped
+    ports:
+      # Host-Port links, Container-Port rechts – in Dockhand z. B. 8080:3000 setzen
+      - "${HOST_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      TZ: ${TZ:-UTC}
+      WEST_ANGLE_THRESHOLD: ${WEST_ANGLE_THRESHOLD:-15}
+      DEFAULT_LAT: ${DEFAULT_LAT:-}
+      DEFAULT_LON: ${DEFAULT_LON:-}
+      DATABASE_PATH: /app/data/weathergod.db
+      RADAR_NOWCAST_URL: ${RADAR_NOWCAST_URL:-https://api.librewxr.net/public/weather-maps.json}
+      NTFY_AUTO_ENABLED: ${NTFY_AUTO_ENABLED:-false}
+      NTFY_SERVER: ${NTFY_SERVER:-https://ntfy.sh}
+      NTFY_TOPIC: ${NTFY_TOPIC:-}
+      NTFY_TOKEN: ${NTFY_TOKEN:-}
+    volumes:
+      # Persistente SQLite-Datenbank und Einstellungen
+      - weathergod-data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    labels:
+      org.opencontainers.image.title: WeatherGod
+      org.opencontainers.image.source: https://github.com/akadawa/WeatherGod
+
+volumes:
+  weathergod-data:
+    name: weathergod-data

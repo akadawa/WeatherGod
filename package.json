@@ -1,0 +1,23 @@
+{
+  "name": "weathergod",
+  "version": "1.0.0",
+  "description": "Wetter- und Sonnenstands-Dashboard mit Rolladen-Vorbereitung",
+  "main": "server/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akadawa/WeatherGod.git"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.9.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "suncalc": "^1.9.0"
+  }
+}

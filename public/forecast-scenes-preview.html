@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherGod – Wetter-Hintergründe Vorschau</title>
+  <link rel="icon" href="/img/favicon.ico" sizes="32x32">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg, #0f1419);
+      color: var(--text, #e8ecf0);
+    }
+
+    .preview-page {
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 2.5rem;
+    }
+
+    .preview-head {
+      margin-bottom: 1.5rem;
+    }
+
+    .preview-head h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.35rem;
+    }
+
+    .preview-head p {
+      margin: 0;
+      color: var(--muted, #8899aa);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+      gap: 1rem;
+    }
+
+    .preview-item {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .preview-label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.12rem;
+      font-size: 0.72rem;
+      line-height: 1.25;
+      color: var(--muted, #8899aa);
+    }
+
+    .preview-label strong {
+      font-size: 0.82rem;
+      color: var(--text, #e8ecf0);
+    }
+
+    .preview-card {
+      height: 18rem;
+      min-width: 0;
+    }
+
+    .preview-card .forecast-content {
+      height: 100%;
+    }
+
+    .preview-back {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--accent, #f5a623);
+      text-decoration: none;
+    }
+
+    .preview-back:hover {
+      text-decoration: underline;
+    }
+
+    .preview-codes {
+      margin-top: 2rem;
+    }
+
+    .preview-codes h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.05rem;
+    }
+
+    .preview-codes-table-wrap {
+      overflow-x: auto;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+
+    .preview-codes-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .preview-codes-table th,
+    .preview-codes-table td {
+      padding: 0.45rem 0.65rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .preview-codes-table th {
+      color: var(--muted, #8899aa);
+      font-weight: 600;
+    }
+
+    .preview-codes-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .preview-codes-table code {
+      color: var(--accent, #f5a623);
+    }
+  </style>
+</head>
+<body>
+  <main class="preview-page">
+    <header class="preview-head">
+      <h1>Wetter-Hintergründe – alle Zustände</h1>
+      <p>Vorschau der Wetter-Hintergründe für das 7-Tage-Widget. Jeder Zustand nutzt ein statisches Himmel-Foto (JPEG), ohne Animation.</p>
+    </header>
+
+    <div class="preview-grid" id="previewGrid"></div>
+
+    <section class="preview-codes" aria-labelledby="previewCodesTitle">
+      <h2 id="previewCodesTitle">Alle WMO-Codes (Open-Meteo)</h2>
+      <div class="preview-codes-table-wrap">
+        <table class="preview-codes-table">
+          <thead>
+            <tr>
+              <th scope="col">Code</th>
+              <th scope="col">Zustand</th>
+              <th scope="col">Hintergrund-Szene</th>
+            </tr>
+          </thead>
+          <tbody id="previewCodesBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <a class="preview-back" href="/dashboard.html">← Zurück zum Dashboard</a>
+  </main>
+
+  <script>
+    const SCENES = [
+      {
+        className: 'is-scene-clear',
+        title: 'Klar',
+        codes: '0',
+        icon: '☀️',
+      },
+      {
+        className: 'is-scene-mostly-clear',
+        title: 'Meist klar',
+        codes: '1',
+        icon: '🌤️',
+      },
+      {
+        className: 'is-scene-partly-cloudy',
+        title: 'Teilweise bewölkt',
+        codes: '2',
+        icon: '⛅',
+      },
+      {
+        className: 'is-scene-cloudy',
+        title: 'Bewölkt',
+        codes: '3',
+        icon: '☁️',
+      },
+      {
+        className: 'is-scene-fog',
+        title: 'Nebel',
+        codes: '45, 48',
+        icon: '🌫️',
+      },
+      {
+        className: 'is-scene-rain',
+        title: 'Regen / Nieselregen',
+        codes: '51, 53, 55, 56, 57, 61, 63, 65, 66, 67',
+        icon: '🌧️',
+      },
+      {
+        className: 'is-scene-showers',
+        title: 'Regenschauer',
+        codes: '80, 81, 82',
+        icon: '🌦️',
+      },
+      {
+        className: 'is-scene-snow',
+        title: 'Schnee / Schneeschauer',
+        codes: '71, 73, 75, 77, 85, 86',
+        icon: '🌨️',
+      },
+      {
+        className: 'is-scene-thunder',
+        title: 'Gewitter',
+        codes: '95, 96, 99',
+        icon: '⛈️',
+      },
+    ];
+
+    const SAMPLE = {
+      weekday: 'MO',
+      tempMax: '24',
+      tempMin: '14',
+      sunrise: '05:42',
+      sunset: '21:18',
+      precipitation: '2.5',
+      sunshineHours: '8.5',
+    };
+
+    function renderCard(scene) {
+      return `
+        <figure class="preview-item">
+          <figcaption class="preview-label">
+            <strong>${scene.title}</strong>
+            <span>WMO-Code ${scene.codes}</span>
+            <span>CSS: .forecast-day.${scene.className}</span>
+          </figcaption>
+          <div class="forecast-day preview-card ${scene.className}">
+            <div class="forecast-scene" aria-hidden="true"></div>
+            <div class="forecast-content">
+              <span class="forecast-wd">${SAMPLE.weekday}</span>
+              <div class="forecast-body">
+                <div class="forecast-head">
+                  <span class="forecast-ico" aria-hidden="true">${scene.icon}</span>
+                  <span class="forecast-temp-max">${SAMPLE.tempMax}°</span>
+                </div>
+                <div class="forecast-details">
+                  <span class="forecast-temp-min">${SAMPLE.tempMin}°</span>
+                  <span class="forecast-sunrise">↑ ${SAMPLE.sunrise}</span>
+                  <span class="forecast-sunset">↓ ${SAMPLE.sunset}</span>
+                  <span class="forecast-rain">${SAMPLE.precipitation} mm</span>
+                  <span class="forecast-sun">☀ ${SAMPLE.sunshineHours} h</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </figure>
+      `;
+    }
+
+    document.getElementById('previewGrid').innerHTML = SCENES.map(renderCard).join('');
+
+    fetch('/api/weather/wmo-codes')
+      .then((res) => res.json())
+      .then((codes) => {
+        document.getElementById('previewCodesBody').innerHTML = codes.map((entry) => `
+          <tr>
+            <td><code>${entry.code}</code></td>
+            <td>${entry.icon} ${entry.label}</td>
+            <td><code>${entry.sceneClass}</code></td>
+          </tr>
+        `).join('');
+      })
+      .catch(() => {
+        document.getElementById('previewCodesBody').innerHTML =
+          '<tr><td colspan="3">Code-Liste konnte nicht geladen werden.</td></tr>';
+      });
+  </script>
+</body>
+</html>

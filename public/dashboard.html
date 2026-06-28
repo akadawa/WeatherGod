@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherGod – Wetterdashboard</title>
+  <link rel="icon" href="/img/favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/png" href="/img/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('weathergod-nav-collapsed');
+        if (stored === null) stored = localStorage.getItem('solarpilot-nav-collapsed');
+        document.documentElement.dataset.navCollapsed = stored === 'false' ? 'false' : 'true';
+      } catch (e) {
+        document.documentElement.dataset.navCollapsed = 'true';
+      }
+    })();
+  </script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-brand">
+      <img src="/img/icon.png" alt="WeatherGod" class="header-logo">
+      <div class="header-text">
+        <h1>WeatherGod</h1>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <nav class="project-nav" id="projectNav" aria-label="Projekt-Navigation">
+      <div class="project-nav-header">
+        <button type="button" id="projectNavToggle" class="project-nav-toggle" aria-expanded="true" title="Menü einklappen" aria-label="Menü einklappen"></button>
+      </div>
+      <ul class="project-nav-list" id="projectNavList" role="list"></ul>
+    </nav>
+
+    <div class="app-content">
+      <main class="dashboard-page">
+        <header class="dashboard-header">
+          <div class="dashboard-header-top">
+            <div class="dashboard-header-left">
+              <h2>Wetterdashboard</h2>
+              <button
+                type="button"
+                id="dashboardLayoutLock"
+                class="dashboard-layout-lock"
+                aria-pressed="false"
+                title="Layout sperren"
+                aria-label="Dashboard-Layout sperren"
+              >🔓</button>
+              <p class="dashboard-location" id="dashboardLocation">Standort wird geladen…</p>
+            </div>
+            <div class="dashboard-refresh-control is-edit-mode" id="dashboardRefreshControl">
+              <button
+                type="button"
+                class="dashboard-refresh-now"
+                id="dashboardRefreshNow"
+                title="Jetzt aktualisieren"
+                aria-label="Jetzt aktualisieren"
+                hidden
+              >↻</button>
+              <span class="dashboard-refresh-label">Aktualisierung</span>
+              <div class="dashboard-refresh-picker" id="dashboardRefreshPicker">
+                <button
+                  type="button"
+                  class="dashboard-refresh-trigger"
+                  id="dashboardRefreshTrigger"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                  aria-label="Aktualisierungsintervall"
+                >5 Min.</button>
+                <ul class="dashboard-refresh-menu" id="dashboardRefreshMenu" role="listbox" hidden>
+                  <li role="option" data-value="0">Aus</li>
+                  <li role="option" data-value="1">1 Min.</li>
+                  <li role="option" data-value="2">2 Min.</li>
+                  <li role="option" data-value="5">5 Min.</li>
+                  <li role="option" data-value="10">10 Min.</li>
+                  <li role="option" data-value="15">15 Min.</li>
+                  <li role="option" data-value="30">30 Min.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div class="dashboard-grid" id="dashboardGrid" aria-live="polite"></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
+  <script src="/js/storage.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/facade.js"></script>
+  <script src="/js/sun.js"></script>
+  <script src="/js/dashboardSunMap.js"></script>
+  <script src="/js/dashboardRadar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
