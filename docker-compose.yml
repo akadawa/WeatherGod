@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
     ports:
       # Host-Port links, Container-Port rechts – in Dockhand z. B. 8080:3000 setzen
-      - "${HOST_PORT:-3000}:3000"
+      - "${HOST_PORT:-4289}:3000"
     environment:
       NODE_ENV: production
       PORT: "3000"

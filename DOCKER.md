@@ -11,7 +11,7 @@ Repository: https://github.com/akadawa/WeatherGod (privat)
 - Docker / Container Manager auf der Synology
 - Dockhand installiert und erreichbar
 - GitHub-Zugang zum privaten Repo (Token oder SSH)
-- Freier Host-Port (Synology-Standard: **8080**, über `HOST_PORT` änderbar)
+- Freier Host-Port (Synology-Standard: **4289**, über `HOST_PORT` änderbar)
 
 ---
 
@@ -72,17 +72,17 @@ Alternativ: unter GitHub → **Packages** → `weathergod` → **Package setting
    NTFY_TOPIC=weathergod-mein-eindeutiger-name
    ```
 
-   Im Repository stehen **keine** Koordinaten – nur deine Werte in Dockhand eintragen.
+   **`HOST_PORT`:** Standard ist **8080** (3000 ist auf vielen NAS schon belegt). Beliebigen freien Port eintragen, z. B. `13080`.
 
 4. **Deploy** – Dockhand **pullt** das Image, baut **nicht** lokal.
 
-   **Netzwerk:** `network_mode: host` – kein extra Docker-Netzwerk, App läuft direkt auf Port **`HOST_PORT`** (Standard `3000`): `http://<NAS-IP>:3000`
+   **Netzwerk:** `network_mode: host` – kein extra Docker-Netzwerk, App läuft direkt auf Port **`HOST_PORT`** (Standard **8080**): `http://<NAS-IP>:8080`
 
 ### 4. Prüfen
 
 - Container **weathergod** → Status **healthy**
-- Browser: `http://<NAS-IP>:3000` (oder `HOST_PORT`)
-- Dashboard: `http://<NAS-IP>:3000/dashboard.html`
+- Browser: `http://<NAS-IP>:8080` (oder dein `HOST_PORT`)
+- Dashboard: `http://<NAS-IP>:8080/dashboard.html`
 
 ### 5. Updates
 
@@ -148,18 +148,18 @@ Funktioniert nicht auf allen Synology-Versionen zuverlässig – **Synology-Comp
 
 ### Port belegt
 
-→ `HOST_PORT=8080` (oder anderen freien Port) setzen.
+→ In Dockhand `HOST_PORT` setzen, z. B. `13080` oder `8765` (Standard in Compose: **8080**, nicht 3000).
 
 ### `could not find an available, non-overlapping IPv4 address pool` / `Pool overlaps` (Synology)
 
 - **Ursache:** Docker kann kein (freies) Netzwerk-Subnetz anlegen – typisch bei vielen Stacks auf der NAS.
 - **Lösung:** Aktuelle `docker-compose.synology.yml` nutzt **`network_mode: host`** (kein `weathergod-net` mehr). **Redeploy** nach Pull.
-- **Port:** über `HOST_PORT` setzen (Standard `3000`), kein Port-Mapping nötig.
+- **Port:** über `HOST_PORT` setzen (Standard **8080**), kein Port-Mapping nötig.
 - Optional aufräumen: `docker network prune` (ungenutzte Netzwerke).
 
 ### Healthcheck unhealthy
 
-→ 15–30 s warten; testen: `http://<NAS-IP>:3000/api/health`
+→ 15–30 s warten; testen: `http://<NAS-IP>:8080/api/health` (oder dein `HOST_PORT`)
 
 ### Webcam-URL / Standort noch gespeichert (nicht im Git)
 
