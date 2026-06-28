@@ -148,6 +148,13 @@ Funktioniert nicht auf allen Synology-Versionen zuverlässig – **Synology-Comp
 
 → `HOST_PORT=8080` (oder anderen freien Port) setzen.
 
+### `could not find an available, non-overlapping IPv4 address pool` (Synology)
+
+- **Ursache:** Docker hat keine freien Subnetze mehr für ein neues Compose-Netzwerk (`weathergod_default`).
+- **Lösung 1:** Aktuelle `docker-compose.synology.yml` nutzen (festes Subnetz `172.30.237.0/24`) → **Redeploy**.
+- **Lösung 2:** Alte Netzwerke aufräumen (SSH auf der NAS): `docker network prune` (nur ungenutzte Netzwerke).
+- **Lösung 3:** Subnetz in der Compose-Datei anpassen, falls `172.30.237.0/24` bei dir schon belegt ist (z. B. `172.30.238.0/24`).
+
 ### Healthcheck unhealthy
 
 → 15–30 s warten; testen: `http://<NAS-IP>:3000/api/health`
